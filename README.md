@@ -1,0 +1,2 @@
+# Oceanlife-Data-Dashboard
+R-Shiny dashboard [<a url="https://rmbranto.shinyapps.io/invasives/">https://rmbranto.shinyapps.io/invasives/</a>] and associated procedures demonstrating interaction and visualisation of multiple species (i.e. invasive species) using data extracted from multiple open-access biodiversity information systems (i.e. WoRMS, OBIS, GBIF, iNaturist, ...) at national (EEZs) to global scales (FAO fishing areas) using R, Jupyter notebook, R-Spocc, R-ggplot, R-Shiny and Github. Features include : UNIQUE and DUPlicate occurrence detection.
