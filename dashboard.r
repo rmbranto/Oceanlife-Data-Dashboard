@@ -246,10 +246,6 @@ df.s<-df.p[df.p$prov==my.prov &
            df.p$year<=my.eYear
            ,]
 
-#if('TRUE' %in% names(table((df.s$eez %in% my.eez | df.s$fao %in% my.fao)))){
-#    df.s<-df.s[df.s$eez %in% my.eez | df.s$fao %in% my.fao,]        
-#}
-
 if(my.fao != '.'){df.s<-df.s[df.s$fao %in% my.fao,]}
 if(my.eez != '.'){df.s<-df.s[df.s$eez %in% my.eez,]}
     
