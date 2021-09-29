@@ -1,0 +1,30 @@
+﻿Oceanlife Data Dashboard Development Roadmap
+
+
+1. Outstanding Issues
+   1. Species metadata creation process
+      1. create separate species list creation script(s)
+      2. Replace species list code in Prepare & Dashboard with call to script(s)
+   2. Dashboard data selection flow
+      1. Introduce <<- to share between functions
+   3. Prepare misses inshore portion of FAO tagged occurrences 
+2. New Features
+   1. Add csv download functionality to dashboard
+   2. Modify Provider Links to include all species in list
+   3. Add API links to dashboard
+   4. Introduce multiple species lists*
+      1. Oceanlife 2021
+      2. Marine plants
+      3. Species at Risks
+   5. Visualisations 
+      1. Integrate data selection function
+      2. Organize hypercube visualizations into single function
+   6. Dashboard
+      1. hypercube visualisation radio buttons**
+      2. summary data popup button
+
+
+
+
+*maybe as a single super dashboard or as separate individual dashboards?
+**Currently only showing time series of Occurrences and Areas
