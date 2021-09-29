@@ -1,6 +1,5 @@
 ﻿Oceanlife Data Dashboard Development Roadmap
 
-
 1. Outstanding Issues
    1. Species metadata creation process
       1. create separate species list creation script(s)
@@ -22,9 +21,6 @@
    6. Dashboard
       1. hypercube visualisation radio buttons**
       2. summary data popup button
-
-
-
 
 *maybe as a single super dashboard or as separate individual dashboards?
 **Currently only showing time series of Occurrences and Areas
