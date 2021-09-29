@@ -18,6 +18,7 @@
    5. Visualisations 
       1. Integrate data selection function
       2. Organize hypercube visualizations into single function
+      3. extend maps to show multiple sources with UNIQUE on the bottom and DUPlicates on top
    6. Dashboard
       1. hypercube visualisation radio buttons**
       2. summary data popup button
