@@ -62,9 +62,9 @@ titlePanel('Invasive marine species ...'),
     selectInput("eez","select eez",eezs,multiple=TRUE,NULL),
     checkboxInput(inputId = "eez_labels", label = "eez labels:", FALSE),
 # downloads
-    selectInput("dataset", "select data",
-                  choices = c("summarized", "expanded", "species", "providers")),
-    downloadButton("downloadData", "Download")
+#    selectInput("dataset", "select data",
+#                  choices = c("summarized", "expanded", "species", "providers")),
+#    downloadButton("downloadData", "Download")
 
     ),
 
@@ -146,7 +146,10 @@ server<-function(input, output,local=TRUE) {
         paste('<a target="_blank", href="https://obis.org/taxon/',
               prov.keys$obis[prov.keys$species==input$species],'">obis</a>',
               sep=''),
-        '</h4></center>',sep='')
+        '</h4></center>',
+        paste('<br>See: <a target="_blank", href="https://github.com/rmbranto/Oceanlife-Data-Dashboard">https://github.com/rmbranto/Oceanlife-Data-Dashboard</a>',
+              sep=''),
+        sep='')
       })
     
 ######################################################################################
