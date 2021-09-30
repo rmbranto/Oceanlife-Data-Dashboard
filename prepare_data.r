@@ -31,6 +31,8 @@ fImages<-c('https://upload.wikimedia.org/wikipedia/commons/1/17/Carcinus_maenas.
 
 species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,fImages=fImages,stringsAsFactors = FALSE)
 
+write.csv(species.style,'invasives_list.csv')
+
 prov.style<-data.frame(
     prov = c("UNIQUE","DUPS","ala","bison","bold","gbif","idigbio","inat","obis"),
     id=c('UNI','DUP','ala','bis','bol','gbi','idi','ina','obi'),
