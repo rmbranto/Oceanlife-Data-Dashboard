@@ -17,6 +17,8 @@ library(ggplot2)
 
 fName<-'invasives.rda'
 load(file=paste('short-',fName,sep=''))
+species.style<-read.csv('invasives_list.csv')
+
 objects()
 
 # summary of input data ...
