@@ -1,6 +1,8 @@
 # create metadata for a list of species depending on name of .rda file
 # to run ... source("species_lists.r") 
 
+options(stringsAsFactors = FALSE)
+
 if(fName=='invasives.rda'){
 
 qNames<-c('Carcinus maenas','Caulerpa taxifolia','Codium fragile','Dreissena polymorpha','Mnemiopsis leidyi','Pterois volitans','Rapana venosa')
@@ -15,7 +17,7 @@ fImages<-c('https://upload.wikimedia.org/wikipedia/commons/1/17/Carcinus_maenas.
            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Pterois_volitans_Manado-e_edit.jpg/220px-Pterois_volitans_Manado-e_edit.jpg',
            'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Rapana_Black_Sea_2008_G1.jpg/220px-Rapana_Black_Sea_2008_G1.jpg')
 
-species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,wikidata=wikidata,fImages=fImages,stringsAsFactors = FALSE)
+species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,wikidata=wikidata,fImages=fImages)
 }
 
 if(fName=='marineplants.rda'){
@@ -26,7 +28,7 @@ wikidata<-c('Q2712208')
 sColors<-c('magenta')
 fImages<-c('https://upload.wikimedia.org/wikipedia/commons/e/ed/Codiumfragile.jpg')
 
-species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,wikidata=wikidata,fImages=fImages,stringsAsFactors = FALSE)
+species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,wikidata=wikidata,fImages=fImages)
 }
 
 cat('species list = ',paste(species.style$Names,collapse=', '),'\n')
