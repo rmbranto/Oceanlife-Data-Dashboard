@@ -2,8 +2,8 @@
 
 1. Outstanding Issues
    1. Species metadata creation process
-      1. create separate species list creation script(s)
-      2. Replace species list code in Prepare & Dashboard with call to script(s)
+      1. modify Prepare to save species list metadata to a .csv file **DONE**
+      2. modify Visualisation and Dashboard to read metadata from .csv file **DONE**
    2. Dashboard data selection flow
       1. Introduce <<- to share between functions
    3. Prepare misses inshore portion of FAO tagged occurrences 
