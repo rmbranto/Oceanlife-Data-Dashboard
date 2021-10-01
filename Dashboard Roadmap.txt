@@ -6,7 +6,9 @@
       2. modify Visualisation and Dashboard to read metadata from .csv file **DONE**
    2. Dashboard data selection flow
       1. Introduce <<- to share between functions
-   3. Prepare misses inshore portion of FAO tagged occurrences 
+   3. Prepare module misses inshore portion of FAO tagged occurrences 
+      1. provide info on FAO and EEZ getting shapefiles
+   4. More testing!!
 2. New Features
    1. Add csv download functionality to dashboard
    2. Modify Provider Links to include all species in list
