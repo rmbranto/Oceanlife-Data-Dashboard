@@ -35,6 +35,8 @@ species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,fImages=fIm
 
 write.csv(species.style,'invasives_list.csv')
 
+qNames=species.style$Names
+
 prov.style<-data.frame(
     prov = c("UNIQUE","DUPS","ala","bison","bold","gbif","idigbio","inat","obis"),
     id=c('UNI','DUP','ala','bis','bol','gbi','idi','ina','obi'),
