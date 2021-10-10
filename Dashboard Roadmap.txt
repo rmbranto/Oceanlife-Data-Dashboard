@@ -7,7 +7,8 @@
    2. Dashboard data selection flow
       1. Introduce <<- to share between functions
    3. Prepare module misses inshore portion of FAO tagged occurrences 
-      1. provide developer type info on getting FAO and EEZ shapefiles
+      1. change FAO indexing from st_inside to st_nearest **DONE**
+      2. provide developer type info on getting FAO and EEZ shapefiles
    4. More testing!!
 2. New Features
    1. Add csv download functionality to dashboard
