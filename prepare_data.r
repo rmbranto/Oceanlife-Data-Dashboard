@@ -165,12 +165,12 @@ for(i in 1:nrow(eez.intersect)){
 
 #fao.shp<-st_read("/home/bobbranton/geoserver/data_dir/fao/World_Fao_Zones.shp",quiet=TRUE)
 fao.pts<-st_as_sf(prov.pts,coords = c('longitude','latitude'), crs = st_crs(fao.shp))
-fao.intersect<-data.frame(st_intersects(fao.pts, fao.shp))
-nrow(fao.intersect)
+fao.nearest<-data.frame(st_nearest_feature(fao.pts, fao.shp))
+nrow(fao.nearest)
 
 prov.pts$fao='99'
-for(i in 1:nrow(fao.intersect)){
-    prov.pts$fao[fao.intersect$row.id[i]]<-fao.shp$zone[fao.intersect$col.id[i]]    
+for(i in 1:nrow(fao.nearest)){
+    prov.pts$fao[i]<-fao.shp$zone[fao.nearest[i,1]]    
 }
 
 df.prov<-merge(df.prov,prov.pts,by=c('longitude','latitude'))[,c(3:8,1:2,9:10)]
