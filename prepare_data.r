@@ -89,8 +89,8 @@ df$prov[substr(df$name,1,4)=='BOLD']<-'bold'
 
 # fix coordinates
 
-df$latitude<-as.numeric(df$latitude)
-df$longitude<-as.numeric(df$longitude)
+df$latitude<-round(as.numeric(df$latitude),12)
+df$longitude<-round(as.numeric(df$longitude),12)
 
 df<-dframe(df) %>%
     coord_impossible() %>%
