@@ -1,13 +1,13 @@
-# rmbranto 2021/08
+# rmbranto 2021/08 - original
+# rmbranto 2021/10 - rewrite
+
 # Demonstrate R programming lanquage 'spocc', 'scrubr' and 'ggplot2' packages to retrieve and combine
 # selected invasive species occurrence data from multiple source, see also: 
 # https://ocean.si.edu/ocean-life/5-invasive-species-you-should-know 
 # https://docs.ropensci.org/spocc/
 
-fName<-'invasives.rda'
-limit<-9999
-
 options(stringsAsFactors = FALSE)
+
 library(spocc)
 library(rinat)
 library(sparsesvd)
@@ -16,44 +16,39 @@ library(stringr)
 library(plyr)
 library(sf)
 
-extract<-FALSE
-pNames<-c('ala','bison','gbif','eBird','idigbio','obis','VertNet')
+load(file='invasives.rda')
+objects()
 
-qNames<-c('Carcinus maenas','Caulerpa taxifolia','Codium fragile','Dreissena polymorpha','Mnemiopsis leidyi','Pterois volitans','Rapana venosa')
-cNames<-c('European Green Crab','Killer Algae','Dead Mans Fingers','Zebra Mussel','Sea Walnut','Lion Fish','Veined Rapa Whelk') # invasive
-wikidata<-c('Q27779','Q310961','Q2712208','Q752130','Q133630','Q824672','Q139053')
-sColors<-c('green','cyan','magenta','red','orange','yellow','dodgerblue')
-fImages<-c('https://upload.wikimedia.org/wikipedia/commons/1/17/Carcinus_maenas.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/e/e7/CaulerpaTaxifolia.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/e/ed/Codiumfragile.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Dreissena_polymorpha3.jpg/220px-Dreissena_polymorpha3.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Sea_walnut%2C_Boston_Aquarium.jpg/220px-Sea_walnut%2C_Boston_Aquarium.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Pterois_volitans_Manado-e_edit.jpg/220px-Pterois_volitans_Manado-e_edit.jpg',
-           'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Rapana_Black_Sea_2008_G1.jpg/220px-Rapana_Black_Sea_2008_G1.jpg')
+########################################################################################
+########################################################################################
+# setup extraction run ...
 
-species.style<-data.frame(Names=qNames,cNames=cNames,sColors=sColors,fImages=fImages,stringsAsFactors = FALSE)
+species.list<-'invasives'
+fao.loc="geobase/World_Fao_Zones.shp"
+eez.loc="geobase/EEZ_Land_v3_202030.shp"
+species.list<-read.csv(paste(species.list,'_list.csv',sep=''))
+qNames=species.list$Names
+prov.list=read.csv('prov_list.csv')
+pNames=prov.list$prov
 
-write.csv(species.style,'invasives_list.csv')
+limit=1
+extract=FALSE
 
-qNames=species.style$Names
-
-prov.style<-data.frame(
-    prov = c("UNIQUE","DUPS","ala","bison","bold","gbif","idigbio","inat","obis"),
-    id=c('UNI','DUP','ala','bis','bol','gbi','idi','ina','obi'),
-    color = c("grey", "white", "red", "orange", "yellow", "green", "cyan", "dodgerblue", "magenta"),
-    order=c(8,9,1:7))
+########################################################################################
+########################################################################################
+# extract data ...
 
 if(extract){
-do.extract<-function(qName=qNames[1],limit=9999){
-
+do.extract<-function(qName,pNames,limit){
     df1<-data.frame(qName=qName,
-                    occ2df(occ(query = qName, from=pNames, limit=limit, has_coords = TRUE)))
-
+                    occ2df(occ(query = qName, 
+                               from=pNames[!(pNames %in% c('UNIQUE','DUPS','inat'))], 
+                               limit=limit, 
+                               has_coords = TRUE)))
     df2<-get_inat_obs(
             query=qName,quality="research",
             geo=TRUE,
-            maxresults=limit)
-    
+            maxresults=limit)    
     df2<-data.frame(qName=qName,
               name=df2$scientific_name,
               longitude=df2$longitude,
@@ -61,31 +56,28 @@ do.extract<-function(qName=qNames[1],limit=9999){
               prov='inat',
               date=df2$datetime,
               key=df2$id)
-
     return(rbind(df1,df2))
 }
-
 df<-NULL
 for(qName in qNames){
     cat(qName,'...\n')
-    df<-rbind(df,do.extract(qName,limit))
+    df<-rbind(df,do.extract(qName,pNames,limit))
     }
-
-nrow(df)
-table(df$qName,df$prov)
 df.raw<-df
 }
 
-#load(fName) ; nrow(df.raw); names(df.raw)
-#table(df.raw$prov,df.raw$qName)
+cat('# df.raw counts by species ...\n')
+table(df.raw$qName,df.raw$prov)%>%
+rbind(.,total=apply(.,2,sum,na.rm=TRUE))%>%
+cbind(.,total=apply(.,1,sum,na.rm=TRUE))%>%
+print(.,na.print='.')   
 
-# data scrubbing
+########################################################################################
+########################################################################################
+# scrub data
 
 df<-df.raw
 names(df)[1]<-'species'
-
-# add prov='bold'    
-df$prov[substr(df$name,1,4)=='BOLD']<-'bold'
 
 # fix coordinates
 
@@ -107,53 +99,54 @@ df.clean<-df
 nrow(df.clean)
 range(df.clean$date)
 
-# dedup ???
+cat('# df.clean counts by species & prov ...\n')
+table(df.clean$species,df.clean$prov)%>%
+rbind(.,col.totals=apply(.,2,sum,na.rm=TRUE))%>%
+cbind(.,ALL=apply(.,1,sum,na.rm=TRUE))%>%
+print(.,na.print='.')   
 
-if(FALSE){
+cat('# df.clean occurrrence counts by species & provs and by ALL, UNIQUE & DUPS ...\n')
+table(df.clean$species,df.clean$prov)%>%
+cbind(.,ALL=apply(.,1,sum,na.rm=TRUE))%>%
+cbind(.,UNIQUE=table(count(df.clean,c('species','longitude','latitude','date'))$species))%>%
+cbind(.,DUPS=.[,'ALL']-.[,'UNIQUE'])%>%
+rbind(.,col.totals=apply(.,2,sum,na.rm=TRUE))%>%
+print(.,na.print='.')   
 
-    dedup
-    
-    smalldf<-df.clean[df.clean$species=='Pterois volitans',]
-    smalldf<-smalldf[1:1000,]
-    NROW(smalldf)
-    dp <- dframe(smalldf) %>% dedup()
-    NROW(dp)
-    attr(dp, "dups")
-}
+########################################################################################
+########################################################################################
+# create df.UNIQUE ...
+df.UNIQUE<-count(df.clean,c('species','longitude','latitude','date'))
+names(df.UNIQUE)[5]<-'DUPS'
+df.UNIQUE$id=seq.int(nrow(df.UNIQUE))
+cat('UNIQUE=',nrow(df.UNIQUE),'\n')
+head(df.UNIQUE)
 
-# find UNIQUEs and DUPS
+#create df.ALL ...
+df.ALL=merge(df.clean,df.UNIQUE,by=c(c('species','longitude','latitude','date')))
+cat('ALL=',nrow(df.ALL),'\n')
+cat('UNIQUE=',nrow(count(df.ALL$id)),'\n')
+cat('DUPS=',length(df.ALL$DUPS[df.ALL$DUPS>1])-nrow(count(df.ALL$id[df.ALL$DUPS>1])))
+head(df.ALL)
 
-df.agg<-aggregate(OCCS~species+longitude+latitude+prov+date,data=data.frame(df.clean,OCCS=1),sum) 
-df.unique<-count(df.agg,c('species','longitude','latitude','date','OCCS'))
-names(df.unique)[dim(df.unique)[2]]<-'DUPS'
+# create df.DUPS ...
+df.DUPS=count(df.ALL[df.ALL$DUP>1,],c('species','longitude','latitude','date','id'))
+names(df.DUPS)[6]='DUPS'
+df.DUPS=df.DUPS[,c('species','longitude','latitude','date','DUPS','id')]
+cat('nrows=',nrow(df.DUPS),'\n')
+cat('DUPS=',sum(df.DUPS$DUPS)-nrow(df.DUPS),'\n')
+head(df.DUPS)
 
-# save UNIQUE into df.prov
-
-df.agg$DUPS<-1
-df.unique$prov<-'UNIQUE'
-df.unique<-df.unique[,c(1:3,7,4:6)]
-df.prov<-rbind(df.agg,df.unique)
-df.prov$year<-as.integer(substr(as.character(df.prov$date),1,4))
-df.prov<-df.prov[,c(4,1,8,5,2:3,6:7)]
-
-# save DUPS into df.prov
-
-df.dups<-df.prov[df.prov$prov=='UNIQUE' & df.prov$DUPS>1,]
-df.dups$prov<-'DUPS'
-df.dups$DUPS<-df.dups$DUPS-1
-df.dups$OCCS<-df.dups$DUPS*df.dups$OCCS
-df.prov<-rbind(df.prov,df.dups)
-
-xtab<-table(df.prov$species,df.prov$prov)
-rbind(xtab,apply(xtab,2,sum))[,c(1:3,5:8,9,4)]
-range(df.prov$date)
-names(df.prov)
-nrow(df.prov)
-
+########################################################################################
+########################################################################################
 # eez and fao indexing
-prov.pts<-count(df.prov,c('latitude','longitude'))[,1:2]
 
-#eez.shp<-st_read("/home/bobbranton/geoserver/data_dir/eez/EEZ_Land_v3_202030.shp",quiet=TRUE)
+fao.shp=st_read(fao.loc,quiet=T)
+eez.shp=st_read(eez.loc,quiet=T)
+
+prov.pts<-count(df.ALL,c('latitude','longitude'))[,1:2]
+nrow(prov.pts)
+
 eez.pts<-st_as_sf(prov.pts,coords = c('longitude','latitude'), crs = st_crs(eez.shp))
 eez.intersect<-data.frame(st_intersects(eez.pts, eez.shp))
 nrow(eez.intersect)
@@ -163,7 +156,6 @@ for(i in 1:nrow(eez.intersect)){
     prov.pts$eez[eez.intersect$row.id[i]]<-eez.shp$ISO_TER1[eez.intersect$col.id[i]]    
 }
 
-#fao.shp<-st_read("/home/bobbranton/geoserver/data_dir/fao/World_Fao_Zones.shp",quiet=TRUE)
 fao.pts<-st_as_sf(prov.pts,coords = c('longitude','latitude'), crs = st_crs(fao.shp))
 fao.nearest<-data.frame(st_nearest_feature(fao.pts, fao.shp))
 nrow(fao.nearest)
@@ -173,11 +165,15 @@ for(i in 1:nrow(fao.nearest)){
     prov.pts$fao[i]<-fao.shp$zone[fao.nearest[i,1]]    
 }
 
-df.prov<-merge(df.prov,prov.pts,by=c('longitude','latitude'))[,c(3:8,1:2,9:10)]
-nrow(df.prov)
-head(df.prov,5)
+df.ALL<-merge(df.ALL,prov.pts,by=c('longitude','latitude'))#[,c(3:9,1:2,10:11)]
 
+cat('nrows= ',nrow(df.ALL),'\n')
+head(df.ALL,5)
+table(df.ALL$fao)[rev(order(table(df.ALL$fao)))]
+table(df.ALL$eez)[rev(order(table(df.ALL$eez)))][1:26]
 
+########################################################################################
+########################################################################################
 # get taxon.ids for each provider and species 
 
 prov.keys<-data.frame(species=species.style$Names)
