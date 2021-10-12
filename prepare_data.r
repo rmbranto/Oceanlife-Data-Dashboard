@@ -16,8 +16,8 @@ library(stringr)
 library(plyr)
 library(sf)
 
-load(file='invasives.rda')
-objects()
+#load(file='invasives.rda')
+#objects()
 
 ########################################################################################
 ########################################################################################
@@ -31,7 +31,9 @@ qNames=species.list$Names
 prov.list=read.csv('prov_list.csv')
 pNames=prov.list$prov
 
-limit=1
+limit=9999
+
+extract=TRUE
 extract=FALSE
 
 ########################################################################################
