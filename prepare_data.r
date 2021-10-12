@@ -1,5 +1,5 @@
 # rmbranto 2021/08 - original
-# rmbranto 2021/10 - rewrite
+# rmbranto 2021/10/12 - rewrite
 
 # Demonstrate R programming lanquage 'spocc', 'scrubr' and 'ggplot2' packages to retrieve and combine
 # selected invasive species occurrence data from multiple source, see also: 
@@ -23,18 +23,19 @@ library(sf)
 ########################################################################################
 # setup extraction run ...
 
-species.list<-'invasives'
+fName<-'invasives'
 fao.loc="geobase/World_Fao_Zones.shp"
 eez.loc="geobase/EEZ_Land_v3_202030.shp"
-species.list<-read.csv(paste(species.list,'_list.csv',sep=''))
+species.list<-read.csv(paste(fName,'_list.csv',sep=''))
 qNames=species.list$Names
 prov.list=read.csv('prov_list.csv')
 pNames=prov.list$prov
 
 limit=9999
+limit=9
 
-extract=TRUE
 extract=FALSE
+extract=TRUE
 
 ########################################################################################
 ########################################################################################
@@ -68,7 +69,7 @@ for(qName in qNames){
 df.raw<-df
 }
 
-cat('# df.raw counts by species ...\n')
+cat('\n# df.raw counts by species ...\n\n')
 table(df.raw$qName,df.raw$prov)%>%
 rbind(.,total=apply(.,2,sum,na.rm=TRUE))%>%
 cbind(.,total=apply(.,1,sum,na.rm=TRUE))%>%
@@ -101,13 +102,12 @@ df.clean<-df
 nrow(df.clean)
 range(df.clean$date)
 
-cat('# df.clean counts by species & prov ...\n')
+cat('\n# df.clean counts by species & prov ...\n\n')
 table(df.clean$species,df.clean$prov)%>%
 rbind(.,col.totals=apply(.,2,sum,na.rm=TRUE))%>%
 cbind(.,ALL=apply(.,1,sum,na.rm=TRUE))%>%
 print(.,na.print='.')   
-
-cat('# df.clean occurrrence counts by species & provs and by ALL, UNIQUE & DUPS ...\n')
+cat('\n# df.clean occurrrence counts by species & provs and by ALL, UNIQUE & DUPS ...\n\n')
 table(df.clean$species,df.clean$prov)%>%
 cbind(.,ALL=apply(.,1,sum,na.rm=TRUE))%>%
 cbind(.,UNIQUE=table(count(df.clean,c('species','longitude','latitude','date'))$species))%>%
@@ -118,6 +118,7 @@ print(.,na.print='.')
 ########################################################################################
 ########################################################################################
 # create df.UNIQUE ...
+cat('\n# df.unique...\n\n')
 df.UNIQUE<-count(df.clean,c('species','longitude','latitude','date'))
 names(df.UNIQUE)[5]<-'DUPS'
 df.UNIQUE$id=seq.int(nrow(df.UNIQUE))
@@ -125,6 +126,7 @@ cat('UNIQUE=',nrow(df.UNIQUE),'\n')
 head(df.UNIQUE)
 
 #create df.ALL ...
+cat('\n# df.ALL...\n\n')
 df.ALL=merge(df.clean,df.UNIQUE,by=c(c('species','longitude','latitude','date')))
 cat('ALL=',nrow(df.ALL),'\n')
 cat('UNIQUE=',nrow(count(df.ALL$id)),'\n')
@@ -132,6 +134,7 @@ cat('DUPS=',length(df.ALL$DUPS[df.ALL$DUPS>1])-nrow(count(df.ALL$id[df.ALL$DUPS>
 head(df.ALL)
 
 # create df.DUPS ...
+cat('\n# df.DUPS...\n\n')
 df.DUPS=count(df.ALL[df.ALL$DUP>1,],c('species','longitude','latitude','date','id'))
 names(df.DUPS)[6]='DUPS'
 df.DUPS=df.DUPS[,c('species','longitude','latitude','date','DUPS','id')]
@@ -143,11 +146,15 @@ head(df.DUPS)
 ########################################################################################
 # eez and fao indexing
 
+cat('\n# unique PTS...\n\n')
+
 fao.shp=st_read(fao.loc,quiet=T)
 eez.shp=st_read(eez.loc,quiet=T)
 
 prov.pts<-count(df.ALL,c('latitude','longitude'))[,1:2]
 nrow(prov.pts)
+
+cat('\n# EEZ...\n\n')
 
 eez.pts<-st_as_sf(prov.pts,coords = c('longitude','latitude'), crs = st_crs(eez.shp))
 eez.intersect<-data.frame(st_intersects(eez.pts, eez.shp))
@@ -158,6 +165,8 @@ for(i in 1:nrow(eez.intersect)){
     prov.pts$eez[eez.intersect$row.id[i]]<-eez.shp$ISO_TER1[eez.intersect$col.id[i]]    
 }
 
+cat('\n# FAO...\n\n')
+
 fao.pts<-st_as_sf(prov.pts,coords = c('longitude','latitude'), crs = st_crs(fao.shp))
 fao.nearest<-data.frame(st_nearest_feature(fao.pts, fao.shp))
 nrow(fao.nearest)
@@ -166,6 +175,8 @@ prov.pts$fao='99'
 for(i in 1:nrow(fao.nearest)){
     prov.pts$fao[i]<-fao.shp$zone[fao.nearest[i,1]]    
 }
+
+cat('\n# df.ALL...\n\n')
 
 df.ALL<-merge(df.ALL,prov.pts,by=c('longitude','latitude'))#[,c(3:9,1:2,10:11)]
 
@@ -178,13 +189,13 @@ table(df.ALL$eez)[rev(order(table(df.ALL$eez)))][1:26]
 ########################################################################################
 # get taxon.ids for each provider and species 
 
-prov.keys<-data.frame(species=species.style$Names)
+prov.keys<-data.frame(species=species.list$Names)
 
 for(my.prov in c('ala','bison','gbif','idigbio','inat','obis')){
 
 spec.keys<-NULL
 
-for (my.species in species.style$Names){
+for (my.species in species.list$Names){
     
     an.error.occured <- FALSE
     
@@ -242,12 +253,16 @@ prov.keys<<-prov.keys
 
 prov.keys
 
-###################################################################################################################
-###################################################################################################################
+########################################################################################
+########################################################################################
 # prepare expanded data
 
 library(dplyr)
-df<-df.prov%>%
+
+df.ALL$year=str_sub(as.character(df.ALL$date),1,4)
+df.ALL$OCCS=1
+
+df<-df.ALL%>%
     transform(area=str_pad(paste(round(latitude,1),round(longitude,1)),13,'right','.'))%>%
     group_by(species, prov ,year, eez, fao ,area) %>%
     summarize(OCCS = sum(OCCS, na.rm = TRUE))%>%
@@ -265,15 +280,13 @@ nrow(df.exp)
 
 table(df.exp$species,df.exp$prov)%>%
 rbind(.,total=apply(.,2,sum,na.rm=TRUE))%>%
-cbind(.,total=apply(.,1,sum,na.rm=TRUE))%>%
-.[,c(1:3,5:8,9,4,10)]
+cbind(.,total=apply(.,1,sum,na.rm=TRUE))
 
-####################################################################################################################################
-####################################################################################################################################
-# save objects 
+########################################################################################
+########################################################################################
+# save outputs
 
 objects()
 save(list=objects(),file=fName )           
 
-save(list=c('df.prov','species.style','fao.shp','eez.shp','prov.style','prov.keys','df.exp'),file=paste('short-',fName,sep=''))
-
+save(list=c('df.ALL','species.list','fao.shp','eez.shp','prov.list','prov.keys','df.exp'),file=paste('short-',fName,sep=''))
