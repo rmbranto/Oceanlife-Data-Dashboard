@@ -255,38 +255,10 @@ prov.keys
 
 ########################################################################################
 ########################################################################################
-# prepare expanded data
-
-library(dplyr)
-
-df.ALL$year=str_sub(as.character(df.ALL$date),1,4)
-df.ALL$OCCS=1
-
-df<-df.ALL%>%
-    transform(area=str_pad(paste(round(latitude,1),round(longitude,1)),13,'right','.'))%>%
-    group_by(species, prov ,year, eez, fao ,area) %>%
-    summarize(OCCS = sum(OCCS, na.rm = TRUE))%>%
-    transform(data=paste(species,prov,year,eez,fao,area,sep=';'))%>%
-    .[,c('data','OCCS')]
-
-fn=tempfile("df.exp")               
-write(unlist(rep(df$data,df$OCCS)),fn)
-df.exp<-data.frame(read.csv(fn,header=FALSE,sep=';'))
-names(df.exp)<-c('species','prov','year','eez','fao','area')
-
-# summary of expanded data ...
-names(df.exp)
-nrow(df.exp)
-
-table(df.exp$species,df.exp$prov)%>%
-rbind(.,total=apply(.,2,sum,na.rm=TRUE))%>%
-cbind(.,total=apply(.,1,sum,na.rm=TRUE))
-
-########################################################################################
-########################################################################################
 # save outputs
 
 objects()
 save(list=objects(),file=fName )           
 
-save(list=c('df.ALL','species.list','fao.shp','eez.shp','prov.list','prov.keys','df.exp'),file=paste('short-',fName,sep=''))
+save(list=c('df.ALL','species.list','fao.shp','eez.shp','prov.list','prov.keys'),file=paste('short-',fName,sep=''))
+
