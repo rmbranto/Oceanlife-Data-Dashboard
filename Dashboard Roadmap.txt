@@ -1,6 +1,7 @@
 ﻿Oceanlife Data Dashboard Development Roadmap
 
 1. Outstanding Issues
+   Investigate using : https://ropensci.github.io/CoordinateCleaner/
    1. Species metadata creation process
       1. modify Prepare to save species list metadata to a .csv file **DONE**
       2. modify Visualisation and Dashboard to read metadata from .csv file **DONE**
