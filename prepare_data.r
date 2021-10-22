@@ -160,7 +160,7 @@ nrow(eez.intersect)
 
 prov.pts$eez='UNK'
 for(i in 1:nrow(eez.intersect)){
-    prov.pts$eez[eez.intersect$row.id[i]]<-eez.shp$ISO_TER1[eez.intersect$col.id[i]]    
+    prov.pts$eez[eez.intersect$row.id[i]]<-eez.shp$ISO_SOV1[eez.intersect$col.id[i]]    
 }
 
 #fao.shp<-st_read("/home/bobbranton/geoserver/data_dir/fao/World_Fao_Zones.shp",quiet=TRUE)
