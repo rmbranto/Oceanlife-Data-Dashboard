@@ -11,4 +11,4 @@ R-Shiny dashboard [ <a href="https://rmbranto.shinyapps.io/invasives/">https://r
 
 see also: <strong><a href="https://github.com/rmbranto/CoastGIS2021">https://github.com/rmbranto/CoastGIS2021</a></strong>
 
-![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/assets/images/screenshot-1.png)
+![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/blob/main/assets/images/screenshot-1.png)
