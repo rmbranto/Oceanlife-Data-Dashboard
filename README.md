@@ -11,9 +11,7 @@ R-Shiny dashboard [ <a href="https://rmbranto.shinyapps.io/invasives/">https://r
 
 see also: <strong><a href="https://github.com/rmbranto/CoastGIS2021">https://github.com/rmbranto/CoastGIS2021</a></strong>
 
-# Live Demonstration
-
-<strong><a href="https://rmbranto.shinyapps.io/invasives/">https://rmbranto.shinyapps.io/invasives/</a></strong>
+live demo: <strong><a href="https://rmbranto.shinyapps.io/invasives/">https://rmbranto.shinyapps.io/invasives/</a></strong>
 
 # Sample Output
 
