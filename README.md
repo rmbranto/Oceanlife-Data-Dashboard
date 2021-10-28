@@ -15,7 +15,7 @@ R-Shiny dashboard offering visualisations of species occurrence data extracted f
 
 # Sample Output
 
-![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/blob/main/assets/images/screenshot-1.png)
+![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/blob/main/assets/images/sample_output.png)
 
 # ER Diagram
 
