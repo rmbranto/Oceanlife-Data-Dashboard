@@ -7,7 +7,7 @@
 ![GitHub](https://img.shields.io/github/license/rmbranto/Oceanlife-Data-Dashboard)
 
 
-R-Shiny dashboard offering visualisations of species occurrence data extracted from multiple open-access biodiversity information systems (i.e. WoRMS, OBIS, GBIF, iNaturist, ...) at national (EEZs) to global scales (FAO fishing areas) using R, Jupyter notebook, R-Spocc, R-ggplot, R-Shiny and Github. Major features include : UNIQUE and DUPlicate occurrence detection; deep links into provider information system.
+R-Shiny dashboard offering visualisations of species occurrence data extracted from multiple open-access biodiversity information systems (i.e. WoRMS, OBIS, GBIF, iNaturist, ...) at national (EEZs) to global scales (FAO fishing areas) using R, Jupyter notebook, R-Spocc, R-ggplot, R-Shiny and Github. Primary focus of new feature development includes : UNIQUE and DUPlicate occurrence detection; deep links into provider information system.
 
 # Live Demonstration 
 
