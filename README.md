@@ -17,6 +17,10 @@ R-Shiny dashboard offering visualisations of species occurrence data extracted f
 
 ![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/blob/main/assets/images/screenshot-1.png)
 
+# ER Diagram
+
+![Random PNG](https://github.com/rmbranto/Oceanlife-Data-Dashboard/blob/main/assets/images/er_diagram.png)
+
 # See also 
 
 <strong><a href="https://github.com/rmbranto/CoastGIS2021">https://github.com/rmbranto/CoastGIS2021</a></strong>
